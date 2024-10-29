@@ -38,7 +38,8 @@ app.get('/pizze', (req, res) => {
 app.get('/pizze/:id', (req, res) => {
     const id_pizza = req.params.id;
     if (isNaN(id_pizza)){
-        res.json({ message: 'Proslijedili ste parametar id koji nije broj!'});
+        res.json({ message: 'Proslijedili ste parametar id koji nije broj!' });
+        return;
     }
 
     const pizza = pizze.find(pizza => pizza.id == id_pizza);
@@ -54,15 +55,16 @@ let narudzbe = [];
 app.post('/naruci', (req, res) => {
     const narudzba = req.body;
 
-    if (!Array.isArray(narudzba) || narudzba.length === 0) {
+    if (!Array.isArray(narudzba.narudzba) || narudzba.narudzba.length === 0 || !narudzba.prezime || !narudzba.adresa || !narudzba.broj_telefona) {
         res.status(400).json({ message: 'Niste poslali ispravne podatke za narudžbu!' });
         return;
     }
 
     let nepostojecePizze = [];
     let ispravneNarudzbe = [];
+    let ukupnaCijena = 0;
 
-    for (const item of narudzba) {
+    for (const item of narudzba.narudzba) {
         if (!item.pizza || !item.velicina || !item.kolicina) {
             res.status(400).json({ message: 'Jedan ili više objekata nema sve potrebne podatke!' });
             return;
@@ -71,6 +73,7 @@ app.post('/naruci', (req, res) => {
         const postojiPizza = pizze.find(pizza => pizza.naziv === item.pizza);
         if (postojiPizza) {
             ispravneNarudzbe.push(item);
+            ukupnaCijena += postojiPizza.cijena * item.kolicina;
         } else {
             nepostojecePizze.push(item.pizza);
         }
@@ -83,11 +86,20 @@ app.post('/naruci', (req, res) => {
         return;
     }
 
-    narudzbe.push(...ispravneNarudzbe);
+    narudzbe.push({
+        narudzba: ispravneNarudzbe,
+        prezime: narudzba.prezime,
+        adresa: narudzba.adresa,
+        broj_telefona: narudzba.broj_telefona
+    });
 
-    const naziviPizza = ispravneNarudzbe.map(item => item.pizza).join(", ");
+    const naziviPizza = ispravneNarudzbe.map(item => `${item.pizza} (${item.velicina})`).join(" i ");
+    
     res.json({
-        message: `Vaša narudžba za pizze (${naziviPizza}) je uspješno zaprimljena!`
+        message: `Vaša narudžba za ${naziviPizza} je uspješno zaprimljena!`,
+        prezime: narudzba.prezime,
+        adresa: narudzba.adresa,
+        ukupna_cijena: ukupnaCijena
     });
 });
 
