@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const app = express();
 
+app.use(express.json());
+
 const PORT = 3001;
 
 app.get("/", (req, res) => {
@@ -38,6 +40,7 @@ app.get('/pizze/:id', (req, res) => {
     if (isNaN(id_pizza)){
         res.json({ message: 'Proslijedili ste parametar id koji nije broj!'});
     }
+
     const pizza = pizze.find(pizza => pizza.id == id_pizza);
     if (pizza) {
         res.json(pizza);
@@ -46,15 +49,46 @@ app.get('/pizze/:id', (req, res) => {
     }
 });
 
+let narudzbe = [];
+
 app.post('/naruci', (req, res) => {
     const narudzba = req.body;
-    const kljucevi = Object.keys(narudzba);
-    if (!(kljucevi.includes('pizza') && kljucevi.includes('velicina'))) {
-        res.send('Niste poslali sve potrebne podatke za narudžbu!');
+
+    if (!Array.isArray(narudzba) || narudzba.length === 0) {
+        res.status(400).json({ message: 'Niste poslali ispravne podatke za narudžbu!' });
         return;
     }
-    res.send(`Vaša narudžba za ${narudzba.pizza} (${narudzba.velicina}) je uspješno
-    zaprimljena!`);
+
+    let nepostojecePizze = [];
+    let ispravneNarudzbe = [];
+
+    for (const item of narudzba) {
+        if (!item.pizza || !item.velicina || !item.kolicina) {
+            res.status(400).json({ message: 'Jedan ili više objekata nema sve potrebne podatke!' });
+            return;
+        }
+
+        const postojiPizza = pizze.find(pizza => pizza.naziv === item.pizza);
+        if (postojiPizza) {
+            ispravneNarudzbe.push(item);
+        } else {
+            nepostojecePizze.push(item.pizza);
+        }
+    }
+
+    if (nepostojecePizze.length > 0) {
+        res.status(400).json({
+            message: `Jedna ili više pizza koje ste naručili ne postoji: ${nepostojecePizze.join(", ")}`
+        });
+        return;
+    }
+
+    narudzbe.push(...ispravneNarudzbe);
+
+    const naziviPizza = ispravneNarudzbe.map(item => item.pizza).join(", ");
+    res.json({
+        message: `Vaša narudžba za pizze (${naziviPizza}) je uspješno zaprimljena!`
+    });
 });
 
 app.listen(PORT, (error) => {
