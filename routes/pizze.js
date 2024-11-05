@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-const pizze = [
+export const pizze = [
     { id: 1, naziv: 'Margerita', cijena: 7.0 },
     { id: 2, naziv: 'Capricciosa', cijena: 9.0 },
     { id: 3, naziv: 'Šunka sir', cijena: 8.0 },
