@@ -2,9 +2,11 @@
   "name": "wa_vjezbe_01",
   "version": "1.0.0",
   "description": "WA1 - Uvod u HTTP, Node i Express",
-  "main": "index.js",
+  "main": "Samostalni zadatak za vježbu 2/index1.js",
   "type": "module",
   "scripts": {
+    "start": "node \"Samostalni zadatak za vježbu 2/index1.js\"",
+    "dev": "nodemon \"Samostalni zadatak za vježbu 2/index1.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
