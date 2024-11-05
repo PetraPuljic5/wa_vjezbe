@@ -10,21 +10,21 @@ export const pizze = [
 ];
 
 router.get('/', (req, res) => {
-res.json(pizze);
+    res.status(200).json(pizze);
 });
 
 router.get('/:id', (req, res) => {
     const id_pizza = req.params.id;
     if (isNaN(id_pizza)) {
-        res.json({ message: 'Proslijedili ste parametar id koji nije broj!' });
+        res.status(400).json({ message: 'Proslijedili ste parametar id koji nije broj!' });
         return;
     }
 
     const pizza = pizze.find(pizza => pizza.id == id_pizza);
     if (pizza) {
-        res.json(pizza);
+        res.status(200).json(pizza);
     } else {
-        res.json({ message: 'Pizza s traženim ID-em ne postoji.' });
+        res.status(404).json({ message: 'Pizza s traženim ID-em ne postoji.' });
     }
 });
 
@@ -33,14 +33,14 @@ router.put('/:id', (req, res) => {
     let tijelo_zahtjeva = req.body;
 
     if (isNaN(id_pizza_req)) {
-        res.json({ message: 'Proslijedili ste parametar id koji nije broj!' });
+        res.status(400).json({ message: 'Proslijedili ste parametar id koji nije broj!' });
         return;
     }
 
     let index = pizze.findIndex(pizza => pizza.id == id_pizza_req);
     pizze[index] = tijelo_zahtjeva;
 
-    return res.json({message:'Ažurirano!'})
+    return res.status(200).json({ message: 'Ažurirano!' });
 });
 
 router.patch('/:id', (req, res) => {
@@ -48,7 +48,7 @@ router.patch('/:id', (req, res) => {
     let tijelo_zahtjeva = req.body;
 
     if (isNaN(id_pizza_req)) {
-        res.json({ message: 'Proslijedili ste parametar id koji nije broj!' });
+        res.status(400).json({ message: 'Proslijedili ste parametar id koji nije broj!' });
         return;
     }
 
@@ -71,7 +71,7 @@ router.patch('/:id', (req, res) => {
     pizze[index] = tijelo_zahtjeva;
     console.log(pizze);
 
-    return res.json({message:'Ažurirano!',azurirani_podatak: tijelo_zahtjeva})
+    return res.status(200).json({ message: 'Ažurirano!', azurirani_podatak: tijelo_zahtjeva });
 });
 
 router.delete('/:id', (req, res) => {
@@ -81,9 +81,9 @@ router.delete('/:id', (req, res) => {
     
     if (index !== -1) {
         pizze.splice(index, 1);
-        res.json({ message: 'Pizza uspješno obrisana.' });
+        res.status(200).json({ message: 'Pizza uspješno obrisana.' });
     } else {
-        res.json({ message: 'Pizza s traženim ID-em ne postoji.' });
+        res.status(404).json({ message: 'Pizza s traženim ID-em ne postoji.' });
     }
 });
 
