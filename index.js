@@ -103,6 +103,53 @@ app.post('/naruci', (req, res) => {
     });
 });
 
+app.put('/pizze/:id', (req, res) => {
+    let id_pizza_req = req.params.id;
+    let tijelo_zahtjeva = req.body;
+
+    if (isNaN(id_pizza_req)) {
+        res.json({ message: 'Proslijedili ste parametar id koji nije broj!' });
+        return;
+    }
+
+    let index = pizze.findIndex(pizza => pizza.id = id_pizza_req);
+    pizze[index] = tijelo_zahtjeva;
+
+    return res.json({message:'Ažurirano!'})
+});
+
+app.patch('/pizze/:id', (req, res) => {
+    let id_pizza_req = req.params.id;
+    let tijelo_zahtjeva = req.body;
+
+    if (isNaN(id_pizza_req)) {
+        res.json({ message: 'Proslijedili ste parametar id koji nije broj!' });
+        return;
+    }
+
+    let index = pizze.findIndex(pizza => pizza.id = id_pizza_req);
+
+    let kljucevi_objekta = Object.keys(tijelo_zahtjeva);
+
+    console.log(kljucevi_objekta);
+
+    for (let kljuc of kljucevi_objekta){
+        if (pizze[index][kljuc] != tijelo_zahtjeva[kljuc]) {
+        pizze[index][kljuc] = tijelo_zahtjeva[kljuc]
+    } else {
+        pizze[index][kljuc] = pizze[index][kljuc];
+    };
+
+
+    pizze[index][kljuc]=tijelo_zahtjeva[kljuc];
+}
+
+pizze[index] = tijelo_zahtjeva;
+console.log(pizze);
+
+return res.json({message:'Azurirano!',azurirani_podatak: tijelo_zahtjeva})
+});
+
 app.listen(PORT, (error) => {
     if (error) {
         console.error(`Greška prilikom pokretanja poslužitelja: ${error.message}`);
