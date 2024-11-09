@@ -1,6 +1,6 @@
 import express from 'express';
-import nekretnineRouter from './routes/nekretnine.js'; // dodajte .js
-import ponudeRouter from './routes/ponude.js'; // dodajte .js
+import nekretnineRouter from './routes/nekretnine.js'; 
+import ponudeRouter from './routes/ponude.js'; 
 
 const app = express();
 const PORT = 3002;
